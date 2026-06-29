@@ -1,0 +1,40 @@
+{
+  "_note": "Copy this to candidate-profile.json and fill in your details. candidate-profile.json is gitignored — your personal data stays local. Used by auto-apply.mjs to fill application forms.",
+  "name": "Your Name",
+  "contact": {
+    "email": "you@example.com",
+    "phone": "+44 0000 000000",
+    "linkedin": "https://www.linkedin.com/in/your-profile/",
+    "github": "https://github.com/your-username"
+  },
+  "location": {
+    "city": "Your City",
+    "country": "United Kingdom",
+    "nationality": "Your nationality"
+  },
+  "visa": {
+    "rightToWork": "Yes — describe your current right-to-work status",
+    "sponsorshipNow": "No — I have the right to work without sponsorship now",
+    "sponsorshipLater": "State whether you'll need sponsorship in future and when"
+  },
+  "work": {
+    "salaryExpect": "£00,000 - £00,000",
+    "noticePeriod": "Immediately available"
+  },
+  "education": {
+    "highest": "Your highest qualification"
+  },
+  "demographics": {
+    "_note": "Optional EEO/diversity fields used to auto-fill voluntary form questions. Leave any as 'Prefer not to say'.",
+    "gender": "Prefer not to say",
+    "pronouns": "",
+    "ethnicity": "Prefer not to say",
+    "disability": "Prefer not to say",
+    "sexualOrientation": "Prefer not to say",
+    "religion": "Prefer not to say",
+    "veteranStatus": "Prefer not to say"
+  },
+  "common_questions": {
+    "whyThisRole": "Tailored per application — leave blank or set a default."
+  }
+}
