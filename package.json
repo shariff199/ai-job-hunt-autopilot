@@ -48,6 +48,6 @@
     "js-yaml": "^4.1.1",
     "mailparser": "^3.9.12",
     "nodemailer": "^9.0.1",
-    "playwright": "1.58.1"
+    "playwright": "1.62.1"
   }
 }
