@@ -11,7 +11,7 @@
  *
  * Example:
  *   node generate-cv.mjs --md temp/cv-monzo.md \
- *     --output output/cv-mohammed-monzo-2026-05-13.pdf
+ *     --output output/cv-yourname-company-2026-05-13.pdf
  */
 
 import { readFileSync, existsSync, mkdirSync } from 'fs';

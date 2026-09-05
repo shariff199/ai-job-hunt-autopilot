@@ -14,7 +14,7 @@
  * Examples:
  *   node generate-cover-letter.mjs \
  *     --text temp/cover-marshmallow.txt \
- *     --output output/cover-letter-mohammed-marshmallow-2026-05-13.pdf
+ *     --output output/cover-letter-yourname-company-2026-05-13.pdf
  */
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
@@ -125,9 +125,9 @@ const html = `<!DOCTYPE html>
 <body>
   <div class="header">
     <h1>Your Name</h1>
-    <div class="subtitle">MSc Data Science (Distinction) | Python • SQL • Machine Learning • Power BI</div>
+    <div class="subtitle">Your headline | Your • Key • Skills</div>
     <div class="contact">
-      Cardiff, United Kingdom &nbsp;|&nbsp;
+      Your City, Country &nbsp;|&nbsp;
       +44 0000 000000 &nbsp;|&nbsp;
       <a href="mailto:you@example.com">you@example.com</a> &nbsp;|&nbsp;
       <a href="https://www.linkedin.com/in/your-profile/">LinkedIn</a> &nbsp;|&nbsp;
