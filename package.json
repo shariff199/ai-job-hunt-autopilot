@@ -47,7 +47,7 @@
     "imapflow": "^1.4.3",
     "js-yaml": "^4.1.1",
     "mailparser": "^3.9.12",
-    "nodemailer": "^9.0.1",
+    "nodemailer": "^10.0.8",
     "playwright": "1.58.1"
   }
 }
