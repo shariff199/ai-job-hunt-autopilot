@@ -10,6 +10,8 @@ candidate:
   linkedin: "linkedin.com/in/janesmith"
   portfolio_url: "https://janesmith.dev"
   github: "github.com/janesmith"
+  # One sentence, used verbatim in every cover letter. State your real position.
+  right_to_work_line: "I have the right to work in the UK and am available immediately. I would welcome the chance to talk about the role."
   twitter: "https://x.com/janesmith"
   # (Optional) Canva resume design ID for visual CV generation via /career-ops pdf.
   # Find it in your Canva design URL: https://www.canva.com/design/DAxxxxxxx/...

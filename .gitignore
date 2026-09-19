@@ -57,3 +57,8 @@ article-digest.md
 data/job-shortlist-*.md
 JOB-HUNT-MASTER-PROMPT.md
 .claude/settings.json
+
+# Your own ledger and fact base (personal data — the .example files are the ones tracked)
+master/bullets.yml
+master/FACT-BASE.md
+master/cv-master*.md

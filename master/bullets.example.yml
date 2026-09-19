@@ -1,0 +1,195 @@
+# bullets.example.yml — the tailoring ledger, worked example
+#
+# Copy to master/bullets.yml and replace every line with your own facts.
+# The person below (Jane Smith) is invented. None of it is real.
+#
+# WHY THIS FILE EXISTS
+#   It is the difference between a CV generator that SELECTS and one that INVENTS.
+#   Every publishable bullet you own lives here once, split into its parts, each
+#   citing the row in master/FACT-BASE.md that licenses it. tailor-v2.mjs reads the
+#   advert and chooses which of these true bullets to show.
+#
+# THE THREE HARD RULES
+#   1. If a claim is not in FACT-BASE.md it does not go on the CV.
+#   2. The engine may drop a bullet. It may never write one.
+#   3. Numbers are measured, never estimated. If you cannot show where a number came
+#      from, it does not belong in this file.
+#
+# THE BANDS
+#   Every advert lands in one of three bands, read off the advert itself:
+#     grad    graduate / junior / entry / trainee / assistant
+#     mid     analyst / engineer, no seniority word
+#     senior  senior / lead / principal / manager / head
+#   `bands` lists where a bullet may appear. A leadership claim is withheld from a
+#   graduate advert, because there it reads as overqualified and gets filtered out.
+#   Suppressing a true bullet is honest. Writing a false one is not.
+#
+# `skills` are the tags the engine matches against the advert's keywords. Use the
+# same tag vocabulary across the file: sql, python, etl, powerbi, dbt, api, llm,
+# automation, data_quality, stakeholder, leadership, delivery, analysis, crm, cloud.
+
+meta:
+  source_cv: master/cv-master.md
+  fact_base: master/FACT-BASE.md
+  updated: 2026-09-20
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Company context lines. A recruiter cannot recognise a small employer's name, but
+# a recruiter who is TOLD what it is stops treating it as a gap. Unknown with no
+# context gets filtered; unknown with context gets read.
+# ─────────────────────────────────────────────────────────────────────────────
+companies:
+  northgate:
+    name: Northgate Analytics
+    descriptor: data and automation consultancy · 30+ client portfolio
+    fact: "FACT-BASE.md — employer confirmed, client count verified"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Roles, newest first. `title_variants` let the heading track the advert without
+# overclaiming: the real title stays available, and a plainer true label is offered
+# where the full one would read as over-senior for that advert.
+# ─────────────────────────────────────────────────────────────────────────────
+roles:
+  - id: current_role
+    company: northgate
+    title: Data and Analytics Lead
+    title_variants:
+      senior: Data and Analytics Lead
+      mid: Data and Analytics Lead
+      grad: Data and Analytics Lead      # never downgrade a real title
+    dates: March 2025 - Present
+    bullets:
+      - id: lead_team
+        bands: [senior]                  # withheld from grad and mid adverts
+        leadership: true
+        skills: [leadership, delivery, stakeholder]
+        text: >-
+          Leads a team of four across reporting and automation, sets the weekly targets each
+          person works to, and takes client escalations through to a signed-off resolution.
+        fact: "FACT-BASE.md — team size 4, confirmed"
+
+      - id: warehouse_reporting
+        bands: [senior, mid, grad]
+        leadership: false
+        skills: [powerbi, sql, stakeholder, analysis]
+        whr:
+          what: Replaced weekly spreadsheet reporting with a warehouse-connected dashboard
+          how: SQL models and Power BI with scheduled refresh, measures agreed with managers first
+          result: weekly reporting cut from about four hours to ten minutes
+        text: >-
+          Replaced a client's weekly spreadsheet reporting with a warehouse-connected Power BI
+          solution, agreeing every measure with the managers before building, which cut weekly
+          reporting from about four hours to ten minutes.
+        fact: "FACT-BASE.md — reporting time before/after, measured with the client"
+
+      - id: pipeline_automation
+        bands: [senior, mid, grad]
+        leadership: false
+        skills: [automation, api, python, llm, crm]
+        text: >-
+          Built an end-to-end lead workflow integrating the CRM, an email verification service
+          and an LLM for personalisation, which now runs on a schedule and saves the client
+          around eight hours a week.
+        fact: "FACT-BASE.md — workflow live since Jan 2026, hours saved measured by the client"
+
+  - id: first_role
+    company: northgate
+    title: Data Analyst
+    title_variants:
+      senior: Data Analyst
+      mid: Data Analyst
+      grad: Data Analyst
+    dates: August 2023 - February 2025
+    bullets:
+      - id: data_quality
+        bands: [senior, mid, grad]
+        leadership: false
+        skills: [data_quality, sql, etl, analysis]
+        text: >-
+          Profiled and cleaned a 2.1-million-row customer dataset, wrote the validation and
+          deduplication rules it is now loaded through, and cut duplicate records by 18%.
+        fact: "FACT-BASE.md — row count and duplicate rate, measured before and after"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Public projects. These carry recognition a small employer cannot, and the code can
+# be checked rather than taken on trust. Two are promoted above employment when the
+# advert is technical.
+# ─────────────────────────────────────────────────────────────────────────────
+projects:
+  - id: public_data_etl
+    title: "Open government spending data: 12M-row ETL"
+    year: 2026
+    stack: Python, PostgreSQL, Parquet, REST API extraction
+    repo: github.com/janesmith/spending-etl
+    skills: [python, etl, api, sql, scale]
+    institution: HM Treasury open data
+    text: >-
+      Built a resumable extractor for a 12,400,000-row dataset published behind a paginated API
+      with no bulk export, using backoff, Parquet storage and an atomic checkpoint so an
+      interrupted run resumes where it stopped.
+    fact: "FACT-BASE.md — row count from the load log, VERIFIED"
+
+  - id: sql_performance
+    title: "Property price analysis: query tuning on 30M rows"
+    year: 2026
+    stack: PostgreSQL, SQL, query plan analysis, indexing
+    repo: github.com/janesmith/property-sql
+    skills: [sql, postgresql, performance, scale]
+    institution: HM Land Registry open data
+    text: >-
+      Profiled a date-range query taking 11,380 ms with EXPLAIN (ANALYZE, BUFFERS) and cut it to
+      304 ms with a BRIN index using 128 kB against the 1,287 MB a B-tree needed for the same result.
+    fact: "FACT-BASE.md — timings from EXPLAIN output, VERIFIED"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Summary construction. Three lines, each carrying its own evidence, chosen per advert.
+# Seniority is carried as RESPONSIBILITY, which the dates support, rather than as
+# headcount, which short dates appear to contradict.
+# ─────────────────────────────────────────────────────────────────────────────
+summary_lines:
+  credential:
+    all: >-
+      Data analyst with an MSc in Data Science and a Power BI certification, who takes client
+      analytics from the first requirement through to the report in daily use.
+
+  delivery:
+    technical: >-
+      Builds the SQL models and Python pipelines underneath a dashboard as well as the dashboard
+      itself, with the profiling, validation and reconciliation in between.
+    bi: >-
+      Builds the Power BI reporting and the SQL models underneath it, having cut one client's
+      weekly reporting from four hours to ten minutes.
+    quality: >-
+      Works the data quality layer that reporting depends on: profiling, validation,
+      reconciliation and root cause analysis.
+    automation: >-
+      Builds the automation around the analysis as well as the analysis, including a scheduled
+      CRM and LLM workflow that saves a client around eight hours a week.
+
+  scope:
+    senior: >-
+      Now leads the analytics function for a 30+ client portfolio and presents results to
+      business owners as often as to technical teams.
+    mid: >-
+      Owns the data work for a 30+ client portfolio and presents results to business owners as
+      often as to technical teams.
+    grad: >-
+      Has delivered analytics across more than 15 client engagements and presents results to
+      business owners as often as to technical teams.
+
+# A CV is written in the third person with the subject dropped; a letter is written in
+# the first. These are the same claims in the voice a letter needs.
+letter_lines:
+  credential: >-
+    I am a data analyst with an MSc in Data Science and a Power BI certification, and I take
+    client analytics from the first requirement through to the report in daily use.
+  scope:
+    senior: >-
+      I currently lead the analytics function for a 30+ client portfolio, and I present results
+      to business owners as often as to technical teams.
+    mid: >-
+      I currently own the data work for a 30+ client portfolio, and I present results to
+      business owners as often as to technical teams.
+    grad: >-
+      I have delivered analytics across more than 15 client engagements, and I present results
+      to business owners as often as to technical teams.
