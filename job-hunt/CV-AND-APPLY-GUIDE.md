@@ -416,3 +416,8 @@ varies. Lean CVs fit on one page.
 9. **Gemini cover letters fail at busy times** (HTTP 503) and there's no retry. Re-run `make-pack`
    for the letter, then fact-check it.
 10. **The email digest can hide an assessment invite.** Search All Mail when you're expecting one.
+11. **Data Scientist CVs come out looking like analyst CVs** unless the ledger has ML bullets. The
+    keyword list has no ML terms (machine learning, scikit-learn, classification, forecasting, NLP),
+    so a DS advert selects analyst bullets. On 24 Sept a Data Scientist CV came out with no ML in it
+    at all. Until the engine is fixed: put your real model work (dissertation, coursework, projects)
+    into `master/bullets.yml` with tags, and check every DS CV for ML evidence before sending.
