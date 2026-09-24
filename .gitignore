@@ -62,3 +62,11 @@ JOB-HUNT-MASTER-PROMPT.md
 master/bullets.yml
 master/FACT-BASE.md
 master/cv-master*.md
+
+# Application tooling: personal answers (the .example files are the ones tracked)
+master/cover-letter-facts.md
+config/workday-profile.json
+config/easyapply-answers.json
+data/token-log.tsv
+.linkedin-chrome-profile/
+.apply-chrome-profile/

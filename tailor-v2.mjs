@@ -39,8 +39,12 @@
  *
  * Usage:
  *   node tailor-v2.mjs --url <advert-url> --company "X" --title "Y" [--band grad|mid|senior]
- *   node tailor-v2.mjs --jd-file <path>   --company "X" --title "Y"
+ *   node tailor-v2.mjs --jd-file <path>   --company "X" --title "Y" [--lean]
  *   node tailor-v2.mjs --self-test
+ *
+ *   --lean (and any grad-band advert once config/profile.yml has a lean: block) renders
+ *   the one-page CV: education first for grad, the primary employer only, four bullets,
+ *   at most two projects inside a length budget.
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 
@@ -281,7 +285,89 @@ export function buildSkills(kw) {
 }
 
 // ── 7. Render ────────────────────────────────────────────────────────────────
-function renderCV({ band, kw, title, company }) {
+// Lean CV for graduate and junior adverts: one page so the candidate does not read as
+// over-qualified. Education first for grad schemes, the primary employer as a single
+// entry, the four bullets that best match the advert (no leadership claims), and at
+// most two projects inside a length budget. Everything person-specific comes from the
+// `lean:` block in config/profile.yml; see config/profile.example.yml.
+function loadLean() {
+  const path = 'config/profile.yml';
+  if (!existsSync(path)) return null;
+  try {
+    const y = yamlLoad(readFileSync(path, 'utf8')) || {};
+    return y.lean || y.candidate?.lean || null;
+  } catch { return null; }
+}
+const LEAN = loadLean();
+
+function renderLeanCV({ band, kw, title }, C = LEAN || {}) {
+  requireIdentity();
+  const grad = band === 'grad';
+  const headline = grad && C.grad_headline ? C.grad_headline : headlineFor(title);
+  const skills = buildSkills(kw);
+  // Which ledger roles feed the lean CV: those whose id starts with primary_role_prefix,
+  // else every role at the newest role's company.
+  const first = LEDGER.roles[0];
+  const primary = LEDGER.roles.filter(r => C.primary_role_prefix ? r.id.startsWith(C.primary_role_prefix) : r.company === first.company);
+  const drop = (C.drop_bullet_patterns || []).length ? new RegExp(C.drop_bullet_patterns.join('|'), 'i') : null;
+  const trimmer = list => {
+    const rules = (list || []).map(([re, rep]) => [new RegExp(re), rep ?? '']);
+    return s => rules.reduce((t, [re, rep]) => t.replace(re, rep), s);
+  };
+  const trimBullet = trimmer(C.bullet_trims);
+  const trimProject = trimmer([...(C.bullet_trims || []), ...(C.project_trims || [])]);
+  const pool = primary
+    .flatMap(r => selectBullets(r, band === 'senior' ? 'mid' : band, kw.tags))
+    .filter(b => !b.leadership && !(drop && drop.test(b.text)))
+    .map(b => ({ ...b, text: trimBullet(b.text) }));
+  const seen = new Set();
+  const bullets = pool.sort((a, b) => b.rel - a.rel).filter(b => !seen.has(b.id) && seen.add(b.id)).slice(0, 4);
+  // Projects fill a length budget, not a count: two long write-ups pushed a mid CV to page two.
+  let budget = grad ? 300 : 520; const projects = [];
+  const exclude = new Set(C.exclude_project_ids || []);
+  for (const p of selectProjects(kw.tags, 6).filter(p => !exclude.has(p.id))) {
+    const len = p.text.trim().length;
+    if (projects.length < 2 && (projects.length === 0 || len <= budget)) { projects.push(p); budget -= len; }
+  }
+  const summary = (grad ? C.summary_grad : C.summary_mid) || buildSummary(band === 'senior' ? 'mid' : band, kw.tags);
+  const L = [`# ${ID.name}`, '', `**${headline}**`, '', ID.contactLine,
+    '', '---', '', '## Professional Summary', '', ...summary.map(s => String(s).trim()), '', '---', ''];
+  const edu = [];
+  if ((C.education || []).length) {
+    edu.push('## Education', '');
+    for (const e of C.education) {
+      edu.push(`### ${e.heading}`);
+      if (e.grade_line) edu.push(e.grade_line);
+      edu.push('');
+      if (grad && (e.grad_only_bullets || []).length) edu.push(...e.grad_only_bullets.map(b => `- ${b}`), '');
+    }
+    edu.push('---', '');
+  }
+  if (grad) L.push(...edu);
+  L.push('## Skills', '', `**Functional Competencies:** ${skills.functional.slice(0, 8).join(' | ')}`,
+    `**Technical Tools:** ${skills.technical.slice(0, 11).join(' | ')}`, '', '---', '');
+  const lead = primary[0] || first;
+  const co = LEDGER.companies[lead.company] || { name: lead.company };
+  const heading = C.primary_role_heading || `${co.name} | ${lead.title_variants?.[band] || lead.title} @@ ${lead.dates}`;
+  L.push('## Employment History', '', `### ${heading}`);
+  const note = C.primary_role_note || co.descriptor;
+  if (note) L.push(`*${note}*`);
+  L.push('');
+  bullets.forEach(b => L.push(`- ${b.text}`));
+  L.push('', '---', '', '## Selected Projects', '');
+  for (const p of projects) {
+    L.push(`### ${p.title} @@ ${p.year}`, `*${p.stack.split(', ').slice(0, 3).join(', ')} · ${p.repo}*`, '',
+      `- ${trimProject(p.text.trim().replace(/\s+/g, ' '))}`, '');
+  }
+  L.push('---', '');
+  if (!grad) L.push(...edu);
+  if (C.certifications_line) L.push('## Certifications', '', C.certifications_line, '', '---', '');
+  L.push(C.rtw_line || ID.rightToWorkLine, '');
+  return L.join('\n');
+}
+
+function renderCV({ band, kw, title, company }, { full = false } = {}) {
+  if (!full && (has('lean') || (band === 'grad' && LEAN))) return renderLeanCV({ band, kw, title });
   const headline = headlineFor(title);
   requireIdentity();
   const summary = buildSummary(band, kw.tags);
@@ -333,17 +419,16 @@ function renderCV({ band, kw, title, company }) {
 
   if (!technical) { L.push(...projectBlock()); L.push('---', ''); }
 
-  L.push('## Education', '');
-  L.push('### University of South Wales, Cardiff | MSc Data Science @@ September 2023 - January 2025');
-  L.push('Grade: Distinction. Big Data Engineering 83, Data Mining and Statistical Modelling 79, Dissertation 75, Applied Machine Learning and Deep Learning 74', '');
-  L.push('### REVA University, Bengaluru | B.Tech Mechanical Engineering @@ June 2016 - July 2020');
-  L.push('Grade: Merit', '');
-  L.push('---', '');
-  L.push('## Certifications', '');
-  L.push('Microsoft Certified: Power BI Data Analyst Associate (PL-300)  ·  SQL (Advanced), HackerRank');
-  L.push('SQL Associate, DataCamp  ·  Databricks Fundamentals  ·  Six Sigma Yellow Belt  ·  Business Analysis Fundamentals', '');
-  L.push('---', '');
-  L.push('Eligible to work full-time in the UK through February 2027; sponsorship required thereafter. Available immediately.', '');
+  // Education, certifications and the right-to-work line come from the lean: block in
+  // config/profile.yml (the same entries the one-page CV uses), never from this file.
+  const C = LEAN || {};
+  if ((C.education || []).length) {
+    L.push('## Education', '');
+    for (const e of C.education) { L.push(`### ${e.heading}`); if (e.grade_line) L.push(e.grade_line); L.push(''); }
+    L.push('---', '');
+  }
+  if (C.certifications_line) { L.push('## Certifications', '', C.certifications_line, '', '---', ''); }
+  L.push(C.rtw_line || ID.rightToWorkLine, '');
   return L.join('\n');
 }
 
@@ -463,7 +548,7 @@ function selfTest() {
   t('summary is exactly three lines', sum.length === 3);
   t('summary never claims a year count', !sum.join(' ').match(/\b(two|three|\d+)\s+years?\b/i));
 
-  const cv = renderCV({ band: 'grad', kw: { top: [], tags, missing: [] }, title: 'Graduate Data Analyst', company: 'X' });
+  const cv = renderCV({ band: 'grad', kw: { top: [], tags, missing: [] }, title: 'Graduate Data Analyst', company: 'X' }, { full: true });
   t('every CV line traces to the ledger', LEDGER.roles.every(r => r.bullets.every(b => typeof b.fact === 'string' && b.fact.length > 0)));
   t('company descriptor is printed', Object.values(LEDGER.companies).every(c => !c.descriptor || cv.includes(c.descriptor) || !cv.includes(c.name)));
   t('skills use the two UKJI subsections', cv.includes('Functional Competencies:') && cv.includes('Technical Tools:'));
@@ -477,7 +562,25 @@ function selfTest() {
   // "reporting".includes("r"). It should now not reach the front of the list at all.
   t('substring match no longer floats "R" to the front', sk.technical.indexOf('R') === -1 || sk.technical.indexOf('R') > 3);
   t('Power BI leads the technical tools for a Power BI advert', sk.technical[0] === 'Power BI');
-  const tech = renderCV({ band: 'mid', kw: { top: [], tags: new Set(['sql', 'python']), missing: [] }, title: 'Data Analyst', company: 'X' });
+  const tech = renderCV({ band: 'mid', kw: { top: [], tags: new Set(['sql', 'python']), missing: [] }, title: 'Data Analyst', company: 'X' }, { full: true });
+
+  // Lean one-page CV (grad band or --lean). Runs with the profile's lean: block, or with
+  // an empty one, so the fallbacks are exercised too.
+  for (const C of [LEAN || {}, {}]) {
+    const lg = renderLeanCV({ band: 'grad', kw: { top: [], tags, missing: [] }, title: 'Graduate Data Analyst' }, C);
+    const lm = renderLeanCV({ band: 'mid', kw: { top: [], tags, missing: [] }, title: 'Data Analyst' }, C);
+    const tag = C === LEAN ? 'lean' : 'lean (no config)';
+    const nb = s => (s.split('## Employment History')[1] || '').split('## Selected Projects')[0].split('\n').filter(l => l.startsWith('- ')).length;
+    t(`${tag}: at most four employment bullets`, nb(lg) <= 4 && nb(lm) <= 4);
+    t(`${tag}: never says "leads a team"`, !/leads a team/i.test(lg) && !/leads a team/i.test(lm));
+    t(`${tag}: at most two projects`, (lg.split('## Selected Projects')[1].match(/^### /gm) || []).length <= 2);
+    if (C.education?.length) {
+      t(`${tag}: grad puts education before employment`, lg.indexOf('## Education') < lg.indexOf('## Employment History'));
+      t(`${tag}: mid puts education after employment`, lm.indexOf('## Education') > lm.indexOf('## Employment History'));
+    }
+    const drop = (C.drop_bullet_patterns || []).length ? new RegExp(C.drop_bullet_patterns.join('|'), 'i') : null;
+    t(`${tag}: dropped bullet patterns never appear`, !drop || !(lg.split('## Employment History')[1] || '').split('## Selected Projects')[0].split('\n').some(l => l.startsWith('- ') && drop.test(l)));
+  }
   t('promoted project band is capped at two', (tech.match(/^### .*@@ 2026$/gm) || []).length === 2);
 
   // The letter must be first person. Reusing the CV's third-person summary put

@@ -352,7 +352,14 @@ async function cmdRead(args) {
   console.log(`Subject: ${p.subject || ''}`);
   console.log(`Date:    ${p.date || ''}`);
   console.log(`Reply-To:${p.replyTo?.text || p.from?.text || ''}`);
-  console.log('\n' + (p.text || '(no plain text body)').trim().slice(0, 4000));
+  // HTML-only mail (Workday, Gem, Indeed) has no p.text: strip the HTML instead of printing nothing.
+  const html = typeof p.html === 'string' ? p.html
+    .replace(/<(style|script)[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<br\s*\/?>|<\/(p|div|tr|li|h\d)>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&#39;|&rsquo;/g, "'")
+    .replace(/[ \t]+/g, ' ').replace(/\n\s*\n+/g, '\n') : '';
+  console.log('\n' + (p.text || html || '(no body)').trim().slice(0, 4000));
 }
 
 async function sendMail(acc, { to, subject, body, inReplyTo, references }) {
