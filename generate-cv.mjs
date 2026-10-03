@@ -17,6 +17,7 @@
 import { readFileSync, existsSync, mkdirSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { chromium } from 'playwright';
+import { PW_OPTS } from './pw-chrome.mjs';
 
 // ── Parse args ─────────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -162,7 +163,7 @@ ${bodyHtml}
 // ── Render ─────────────────────────────────────────────────────────
 async function main() {
   console.log(`Rendering CV: ${mdPath} -> ${output}`);
-  const browser = await chromium.launch();
+  const browser = await chromium.launch(PW_OPTS({ headless: true }));
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: 'networkidle' });
   await page.pdf({

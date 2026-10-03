@@ -189,6 +189,7 @@ The 20 not filled were waiting on portal accounts that only the candidate can cr
 | `job-hunt/AGENT-BRIEF.md` | The prep agent's rules (vet, tailor, ATS, letter, PDFs, recruiter) |
 | `job-hunt/APPLY-BRIEF.md` | The apply agent's rules (browser, fill, stop, screenshot) |
 | `job-hunt/SYSTEM-HANDBOOK.md` | This file |
+| `job-hunt/CV-AND-APPLY-GUIDE.md` | The working rules as of 24 Sept: lean CV, scripts, form answers, email, outreach, known bugs |
 | `master/FACT-BASE.md` | What is true about them, and what is banned. The source of every claim |
 | `master/bullets.yml` | Every publishable bullet, split and cited, for the engine to select from |
 | `tailor-v2.mjs` | Reads the advert, selects bullets, writes cv.md + cover-letter.txt + match-report.md |

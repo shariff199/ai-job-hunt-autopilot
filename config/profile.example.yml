@@ -71,3 +71,41 @@ location:
   visa_status: "No sponsorship needed"
   # For remote roles outside your country:
   # onsite_availability: "1 week/month in any city"
+
+# ── Lean one-page CV (tailor-v2.mjs --lean, and every grad-band advert) ─────────
+# Everything here is printed as written. Keep it true; the ledger (master/bullets.yml)
+# still supplies the bullets and projects. education, certifications_line and rtw_line
+# are also used by the full (non-lean) CV.
+lean:
+  grad_headline: "MSc Data Science Graduate"
+  # Three lines each. summary_grad for graduate/junior adverts, summary_mid otherwise.
+  summary_grad:
+    - "MSc Data Science graduate (Merit, 2025) with the Microsoft PL-300."
+    - "Since graduating I have worked as a data analyst for consultancy clients, building reporting and the data behind it."
+    - "I work in SQL, Python and Power BI, and explain results to people who are not technical."
+  summary_mid:
+    - "Data analyst with an MSc in Data Science (Merit, 2025) and the Microsoft PL-300."
+    - "I build reporting, reconciliations and data pipelines for consultancy clients."
+    - "I work in SQL, Python and Power BI, and explain results to people who are not technical."
+  # Ledger role ids starting with this prefix feed the lean CV (blank = every role at your newest employer).
+  primary_role_prefix: "current_"
+  primary_role_heading: "Example Analytics Ltd | Data Analyst @@ March 2025 - Present"
+  primary_role_note: "data and automation consultancy"
+  # Bullets whose text matches any of these (case-insensitive regex) are left off the lean CV.
+  drop_bullet_patterns: ["team of", "portfolio of"]
+  # Optional [regex, replacement] pairs that shorten long ledger sentences for the one-page CV.
+  bullet_trims:
+    - [", which now runs on a schedule and saves the client around eight hours a week", ""]
+  # Same idea, applied to project write-ups only.
+  project_trims: []
+  exclude_project_ids: []
+  education:
+    - heading: "Example University, Exampletown | MSc Data Science @@ September 2023 - September 2024"
+      grade_line: "Grade: Merit"
+      grad_only_bullets:
+        - "Dissertation: analysed an open dataset with Python and statistical tests."
+    - heading: "Example College | BSc Mathematics @@ September 2019 - June 2022"
+      grade_line: "Grade: 2:1"
+  certifications_line: "Microsoft Certified: Power BI Data Analyst Associate (PL-300)  ·  Example Certificate"
+  # Optional. Defaults to candidate.right_to_work_line.
+  # rtw_line: "Eligible to work in the UK. Available immediately."

@@ -1,0 +1,41 @@
+{
+  "_note": "Standing answers for workday-apply.mjs. Copy to config/workday-profile.json (gitignored) and replace every value. Regex strings are case-insensitive. Unknown questions are reported, never guessed.",
+  "given": "Jane",
+  "family": "Doe",
+  "address1": "1 Example Street",
+  "city": "Exampletown",
+  "postcode": "AB1 2CD",
+  "phone": "7000000000",
+  "hearAbout": { "term": "Other Job Board", "pick": "^(Ad on Website|Other Job Board)$" },
+  "workedBefore": "No",
+  "experience": [
+    { "title": "Data Analyst", "company": "Example Analytics Ltd", "from": ["03", "2025"], "current": true },
+    { "title": "Junior Analyst", "company": "Sample Retail plc", "from": ["08", "2023"], "to": ["02", "2025"] }
+  ],
+  "education": [
+    {
+      "_hint": "school/field are [search term, regex the chosen pill must match, fallback term]. If your university isn't in the school list, pick Other.",
+      "school": ["Example University", "^(Example University|Other|Other University - not listed)$", "Other University - not listed"],
+      "degree": "Master",
+      "field": ["Data Analytics", "^(Data Analytics|Computer Science)$", "Computer Science"],
+      "result": "Merit",
+      "from": "2023",
+      "to": "2024"
+    }
+  ],
+  "skills": [
+    ["Python", "^Python \\(Programming Language\\)$"],
+    ["SQL", "^SQL$"],
+    ["Power BI", "^(Microsoft )?Power BI$"]
+  ],
+  "questions": [
+    ["legally (authori[sz]ed|permitted) to work", "^Yes"],
+    ["non-compete|post-employment restriction", "^No"],
+    ["at least 18", "^Yes"],
+    ["Disability Confident", "^No"]
+  ],
+  "textAnswers": [
+    ["desired Annual Salary|salary expectation|expected salary", "30000"]
+  ],
+  "startDate": { "match": "desired start date|available to start|start date", "daysFromToday": 14 }
+}

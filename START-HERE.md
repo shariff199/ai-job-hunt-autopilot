@@ -1,5 +1,9 @@
 # Start here
 
+> **New (24 Sept 2026): read `job-hunt/CV-AND-APPLY-GUIDE.md` first.** It covers how CVs are built and
+> tailored, the ATS rules, the form-filling scripts (Workday, LinkedIn Easy Apply), email sync, LinkedIn
+> outreach, running several terminals, and the known bugs.
+
 This repo is a job-application system run by AI agents. It finds jobs, writes a CV and cover
 letter for each one, checks its own work, fills the forms, and stops. **You press Submit.**
 

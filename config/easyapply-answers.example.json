@@ -1,0 +1,45 @@
+{
+  "_note": "Answers for easyapply.mjs (LinkedIn Easy Apply). Copy to config/easyapply-answers.json (gitignored) and replace every value. Injected into the page as window.__A.",
+  "phone": "7000000000",
+  "phoneCountry": "United Kingdom (+44)",
+  "postcode": "AB1 2CD",
+  "address1": "1 Example Street",
+  "city": "Exampletown",
+  "country": "United Kingdom",
+  "linkedin": "https://www.linkedin.com/in/jane-doe-example",
+  "salary": "30000",
+  "notice": "Available immediately",
+  "englishLevel": "Professional",
+  "pronouns": null,
+  "gender": "Prefer not to say",
+  "ethnicity": "Prefer not to say",
+  "disability": "No",
+  "veteran": "No",
+  "drivingLicence": false,
+  "hasDegree": true,
+  "basedInUK": true,
+  "rightToWork": true,
+  "_sponsorship": "needsSponsorship answers generic 'will you need sponsorship?' questions. unrestrictedRightToWork answers 'can you work WITHOUT sponsorship / indefinite leave / settled status?' questions, which are always checked first.",
+  "needsSponsorship": true,
+  "unrestrictedRightToWork": false,
+  "willingToRelocateOrCommute": true,
+  "years": {
+    "relevantPattern": "sql|python|power ?bi|excel|data|analy|report|tableau|dashboard|etl|business|stakeholder|requirement",
+    "relevant": "1",
+    "other": "0"
+  },
+  "education": [
+    { "schoolMatch": "Example University", "degree": "Masters", "fields": ["Data Science", "Data Analytics", "Computer and Information Science"] },
+    { "schoolMatch": "Example College", "degree": "Bachelors", "fields": ["Mathematics"] }
+  ],
+  "educationDefault": { "degree": "High School", "fields": ["Mathematics"] },
+  "_extraRules": "[regex, answer] pairs checked right after the sponsorship rule, before the built-in rules. Use them for skill questions.",
+  "extraRules": [
+    ["access and excel|analytical reports|excel experience|microsoft access", "Yes"]
+  ],
+  "_workExperienceFix": "Optional. If LinkedIn pre-fills a Work Experience description that you don't want on applications, set match (regex on the old text) and replacement. Delete this key to skip.",
+  "workExperienceFix": {
+    "match": "text that only appears in the description you want to replace",
+    "replacement": "Data analysis and reporting for consultancy clients.\n- Built a Power BI report that replaced weekly spreadsheet reporting."
+  }
+}
