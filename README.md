@@ -1,4 +1,4 @@
-# AI Job Search Automation
+# AI Job Hunt Autopilot
 
 An end-to-end, AI-assisted job-search pipeline for the UK market: it scans job boards, filters to roles that can actually sponsor a visa, scores each role against your CV, generates tailored CVs and cover letters, auto-fills application forms, and keeps a single source of truth synced to Notion and your inbox.
 
